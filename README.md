@@ -16,15 +16,25 @@ What are the major relationships between the comorbidities in HF patients?
 Data
 The dataset used for this study is the MIMIC-III (Medical Information Mart for Intensive Care III) dataset. It is a large,
 freely available database provided by the Massachusetts Institute of Technology (MIT), comprising de-identified health-related data associated with over forty thousand patients who stayed in critical care units (ICUs) of the Beth Israel Deaconess Medical Center between 2001 and 2012. The database includes information such as demographics, vital sign measurements, laboratory test results, mortality, etc. Links to this dataset are provided here:
+
  MIMIC III Website (https://mimic.mit.edu/docs/iii/ ), and on Kaggle at https://www.kaggle.com/datasets/asjad99/mimiciii
 The MIMIC III database was populated with data acquired during routine hospital care. Data was downloaded from several sources, including:
+
  Archives from critical care information systems,
+
  Hospital electronic health record databases.
+
  Social Security Administration Death Master File.
+
 Additional information was collected from hospital and laboratory health record system, including;
+
  patient demographics and in-hospital mortality.
+
  laboratory test results (for example, hematology, chemistry, and microbiology results).
+
  discharge summaries and reports of electrocardiogram and imaging studies.
+
  billing-related information such as International Classification of Disease, 9th Edition (ICD-9) codes, Diagnosis
+
 Related Group (DRG) codes, and Current Procedural Terminology (CPT) codes.
 A subset of this data set consisting of information on patients diagnosed with Heart Failure (HF) was mined from the main dataset and will underpin this project. This subset contains 1176 HF patients before cleaning and 51 features. Details of the features (field names are provided in Appendix 1). All features, but 2 futures (ID and group) were used in the investigation. The dependent variable was “outcome – 1: Dead, 0: Alive”, a categorical variable with 2 levels; hence the deployment of logistic regression.
