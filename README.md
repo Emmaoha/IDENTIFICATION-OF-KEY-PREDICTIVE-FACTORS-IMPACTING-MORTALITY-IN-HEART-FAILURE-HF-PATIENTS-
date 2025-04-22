@@ -36,5 +36,10 @@ Additional information was collected from hospital and laboratory health record 
 
  billing-related information such as International Classification of Disease, 9th Edition (ICD-9) codes, Diagnosis
 
+## 🧪 Built With
+![R](https://img.shields.io/badge/-R-3776AB?logo=R&logoColor=white&style=flat-square)
+
+
+
 Related Group (DRG) codes, and Current Procedural Terminology (CPT) codes.
 A subset of this data set consisting of information on patients diagnosed with Heart Failure (HF) was mined from the main dataset and will underpin this project. This subset contains 1176 HF patients before cleaning and 51 features. Details of the features (field names are provided in Appendix 1). All features, but 2 futures (ID and group) were used in the investigation. The dependent variable was “outcome – 1: Dead, 0: Alive”, a categorical variable with 2 levels; hence the deployment of logistic regression.
