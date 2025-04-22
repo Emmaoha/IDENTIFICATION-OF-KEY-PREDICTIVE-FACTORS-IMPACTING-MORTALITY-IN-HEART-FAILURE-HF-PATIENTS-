@@ -1,6 +1,7 @@
 # IDENTIFICATION-OF-KEY-PREDICTIVE-FACTORS-IMPACTING-MORTALITY-IN-HEART-FAILURE-HF-PATIENTS-
-IDENTIFICATION OF KEY PREDICTIVE FACTORS IMPACTING MORTALITY IN HEART
-FAILURE (HF) PATIENTS DATA 603 – STATISTICAL MODELLING WITH DATA with R
+
+IDENTIFICATION OF KEY PREDICTIVE FACTORS IMPACTING MORTALITY IN HEART FAILURE (HF) PATIENTS DATA 603 – STATISTICAL MODELLING WITH DATA with R
+
 GROUP MEMBERS: Chibuzo Oha, Osei Agyei, Success Attoni, Stephen Anlagyei, and Cecil Oiku 
 
 Most HF patients lack the knowledge on how to manage their lives to reduce the risk of mortality as a result of the disease. Medical practitioners are generally aware of the risk factors impacting mortality in HF patients. However, the knowledge and awareness of how these factors interplay to determine the overall health of the HF patient is still a subject for investigation, irrespective of the studies that abound in this area, given the non-unique solutions to modelling/predictive problems aggravated by the variety of inputs and analysis methods that abound. This study aims to add another data point for reference in the medical profession, thus enriching the information/knowledge base about possible top predictors of mortality in HF patients.
