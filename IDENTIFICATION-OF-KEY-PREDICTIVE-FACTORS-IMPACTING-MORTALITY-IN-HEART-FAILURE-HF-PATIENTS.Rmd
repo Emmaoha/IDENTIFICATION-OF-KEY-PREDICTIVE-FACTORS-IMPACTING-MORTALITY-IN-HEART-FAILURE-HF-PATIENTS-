@@ -1,0 +1,232 @@
+---
+title: "IDENTIFICATION OF KEY PREDICTIVE FACTORS IMPACTING MORTALITY IN HEART
+FAILURE (HF) PATIENTS"
+author: "Chibuzo Oha"
+date: "2024-11-13"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+```{r}
+mimicIII_data1= read.csv("C:\\Users\\CEO\\Documents\\DATA 603\\Project\\mimicIII_data1.csv")
+head(mimicIII_data1, 5)
+```
+```{r}
+library(dplyr)
+```
+
+
+```{r}
+
+# Select relevant columns
+selected_data <- mimicIII_data1 %>%
+  select(Creatinine, age, gender, BMI, Systolic_blood_pressure, Diastolic_blood_pressure, hypertensive, diabetes, Renal_failure)
+
+# Convert categorical variables (like gender, hypertensive, diabetes, and Renal_failure) to numeric if they aren't already
+selected_data$gender <- as.numeric(factor(selected_data$gender))
+selected_data$hypertensive <- as.numeric(factor(selected_data$hypertensive))
+selected_data$diabetes <- as.numeric(factor(selected_data$diabetes))
+selected_data$Renal_failure <- as.numeric(factor(selected_data$Renal_failure))
+
+# Calculate correlation matrix
+correlation_matrix <- cor(selected_data, use = "complete.obs")
+
+# Extract correlation of creatinine with other variables
+creatinine_correlation <- correlation_matrix["Creatinine", ]
+
+# Display the result
+print(creatinine_correlation)
+
+```
+
+```{r}
+summary(mimicIII_data1[c("age", "BMI", "Systolic_blood_pressure", "Diastolic_blood_pressure", "hypertensive", "diabetes", "Renal_failure")])
+```
+
+```{r}
+# Define the columns you want to compute quantiles for
+columns <- c("BMI", "Systolic_blood_pressure", "Diastolic_blood_pressure"
+             )
+
+# Apply the quantile function to each column
+quantile_results <- sapply(columns, function(col) {
+  quantile(mimicIII_data1[[col]], na.rm = TRUE)
+})
+
+quantile_results
+
+```
+`
+```{r}
+#install.packages("pheatmap")
+```
+
+
+```{r}
+library(pheatmap)
+
+# Load necessary library
+library(dplyr)
+
+# Select relevant columns (make sure the column names match your data)
+selected_data <- mimicIII_data1 %>%
+  select(Creatinine, age, gender, BMI, Systolic_blood_pressure, Diastolic_blood_pressure, hypertensive, diabetes, Renal_failure,Creatine_kinase)
+
+# Convert categorical variables to numeric if necessary
+selected_data$gender <- as.numeric(factor(selected_data$gender))
+selected_data$hypertensive <- as.numeric(factor(selected_data$hypertensive))
+selected_data$diabetes <- as.numeric(factor(selected_data$diabetes))
+selected_data$Renal.failure <- as.numeric(factor(selected_data$Renal_failure))
+
+# Calculate the correlation matrix
+correlation_matrix <- cor(selected_data, use = "complete.obs")
+
+# Generate the heatmap with annotations
+pheatmap(correlation_matrix, 
+         display_numbers = TRUE,      # Annotate with correlation values
+         color = colorRampPalette(c("blue", "white", "red"))(50), # Color gradient
+         main = "Correlation Matrix of Creatinine with Other Variables",
+         fontsize_number = 10)        # Adjust the font size of annotations
+
+```
+```{r}
+fullModel1= lm(Creatinine~age+gender+BMI+Systolic_blood_pressure+Diastolic_blood_pressure+ hypertensive+diabetes+Renal_failure, data= mimicIII_data1)
+summary(fullModel1)
+```
+```{r}
+library(ggplot2)
+
+# Scatter Plot
+ggplot(mimicIII_data1, aes(x = age, y = Creatinine)) +
+  geom_point(color = "blue") +
+  labs(title = "Creatinine vs. Age", x = "Age", y = "Creatinine") +
+  theme_minimal()
+```
+
+```{r}
+ggplot(mimicIII_data1, aes(x = Systolic_blood_pressure, y = Creatinine)) +
+  geom_point(color = "red") +
+  labs(title = "Creatinine vs. Systolic Blood Pressure", 
+       x = "Systolic Blood Pressure", y = "Creatinine") +
+  theme_minimal()
+```
+
+```{r}
+reducedModel= lm(Creatinine~age+gender+Systolic_blood_pressure+Renal_failure, data= mimicIII_data1)
+summary(reducedModel)
+```
+Null Hypothesis($H_0$): The predictor variables removed has no significant effect on the affects Creatinine.
+
+Alternative Hypothesis($H_a$): The predictor variables removed has a significant effect on the affects Creatinine.
+
+$$H_0: \beta_k = 0$$
+$$H_a: \beta_k \neq 0 \quad (k = 1, 2, \dots, p)$$
+
+
+```{r}
+anova(reducedModel,fullModel1)
+```
+At p-value > 0.05, we fail to reject the null hypothesis; 
+
+```{r}
+reducedModel1= lm(Creatinine~age+gender+Renal_failure, data= mimicIII_data1)
+summary(reducedModel1)
+```
+
+We choose reducedModel due to reducedModel having higher  $R^2_{adj}$ = 0.2256 and lower RSE 1.125 compared to reducedModel1
+
+```{r}
+InteractReducedModel= lm(Creatinine~(age+gender+Systolic_blood_pressure+Renal_failure)^2, data= mimicIII_data1)
+summary(InteractReducedModel)
+```
+```{r}
+InteractModelBest= lm(Creatinine~age+Systolic_blood_pressure+Renal_failure+age*Systolic_blood_pressure+age*Renal_failure, data= mimicIII_data1)
+summary(InteractModelBest)
+#summary(reducedModel)
+```
+Null Hypothesis (($H_0$)): The reduced model is a best model
+
+Alternative Hypothesis (($H_a$)): The reduced model is not a best model
+
+```{r}
+reducedModel1= lm(Creatinine~age+gender+Renal_failure, data= mimicIII_data1)
+InteractModelBest= lm(Creatinine~age+Systolic_blood_pressure+Renal_failure+age*Systolic_blood_pressure+age*Renal_failure, data= mimicIII_data1)
+anova(InteractModelBest, reducedModel )
+```
+The InteractModelBest model has higher $R^2_{adj}$ = 0.2609  and lower RSE of 1.099 meaning that InteractModelBest model is better whe compared to the Reduced Model with $R^2_{adj}$ = 2256 and RSE =1125
+
+
+From the With a p-value of 9.296e-14< 0.05 significance, we reject the null hypothesis and accept the alternate hypothesis meaning that InteractModelBest model is the best fit model to be used to prediction
+
+
+The best fit model
+
+\begin{align*}
+&\hat{Creatinine} = -1.8227156+0.0386174{age}+0.0267917{Systolic_blood_pressure}+4.0849817{Renal_failure}\\
+&-0.0003423{age} * {Systolic_blood_pressure}-0.0381749{age} * {Renal_failure}
+\end{align*}
+ 
+
+```{r}
+newData1 = data.frame(age =72 ,Systolic_blood_pressure=155.8667, Renal_failure= 1 )
+predict(InteractModelBest, newData1,interval = "predict")
+```
+The response value is between the lower and upper limit of the predicted value, which signifies that the model predicted correctly and can be used for further prediction Cretinine in indiviuals.
+
+
+```{r}
+library(ggplot2)
+ggplot(InteractModelBest, aes(x=.fitted, y=.resid)) +
+  geom_point(colour = "purple") +
+  geom_hline(yintercept = 0) +
+  geom_smooth(colour = "green4")+
+  ggtitle("Residual plot: Residual vs Fitted values") 
+```
+This is a perfect model as there is no patterns, the plot shows no funneling, which means there is no problem with linearity assumption.
+
+```{r}
+plot(InteractModelBest, which=1)
+```
+This is a perfect model as there is no patterns, the plot shows no funneling, which means there is no problem with linearity assumption.
+
+Test for heteroscedasticity (non constant variance)
+
+H_0: heteroscedasticity is not present (homoscedasticity)
+H_a: heteroscedasticity is present
+
+```{r}
+library(lmtest)
+bptest(InteractModelBest)
+```
+We reject the null hypothesis (p-value < 0.05), so we conclude we do have heteroscedasticity
+
+```{r}
+library(mctest)
+nteractModelBest= lm(Creatinine~age+Systolic_blood_pressure+Renal_failure+age*Systolic_blood_pressure+age*Renal_failure, data= mimicIII_data1)
+imcdiag(InteractModelBest, method="VIF")
+```
+## check for normality test
+
+H_0: We have normality
+H_a: We do not have normality
+
+```{r}
+shapiro.test(residuals(InteractModelBest))
+```
+Shapiro-Wilk normality test confirms that the residuals are not normally distributed as the p-
+value= 2.2e-16 <0.05
+From the Shapiro-Wilk analysis with p-value= 2.2e-16 <0.05 we reject the null hypothesis 
+
+H_0 : Sample data are significantly normally distributed
+H_a : Sample data are not significantly normally distributed
+
+```{r}
+ggplot(data=mimicIII_data1, aes(residuals(InteractModelBest))) +
+geom_histogram(breaks = seq(-1,1,by=0.1), col="green3", fill="green4") +
+labs(title="Histogram for residuals") +
+labs(x="residuals", y="Count")
+```
+p-value =2.2e-16 < o.05, We reject the null hypothesis, therefore the Sample data are not significantly normally distributed
+
+
